@@ -22,6 +22,14 @@ Domyślnym językiem aplikacji jest angielski. W widoku `Ustawienia` wybierz `Po
 
 Walutę wyceny wybiera się osobno w `Ustawienia` → `Reguły oferty`. Zmiana obejmuje kwoty w aplikacji oraz nowe eksporty PDF i Excel. Starsze projekty bez zapisanej waluty używają PLN.
 
+## Uruchomienie gotowej aplikacji
+
+1. Pobierz `Calcelyx-1.0-Windows.zip` z najnowszego wydania GitHub.
+2. Rozpakuj całe archiwum do folderu, w którym masz prawo zapisu.
+3. Uruchom `Calcelyx.exe` i pozostaw go razem z folderem `_internal`.
+
+Po samodzielnym zbudowaniu projektu taki sam folder aplikacji znajduje się w `dist/Calcelyx`.
+
 ## Edytowalne cenniki
 
 - `data/Calcelyx_Price_List_EN.xlsx` — wersja angielska;

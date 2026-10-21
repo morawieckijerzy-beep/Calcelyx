@@ -24,9 +24,11 @@ Calcelyx is an offline Windows application for preparing renovation and interior
 
 ## Running the packaged application
 
-1. Open the `dist/Calcelyx` folder.
-2. Run `Calcelyx.exe`.
-3. Keep the executable together with the other files in that folder.
+1. Download `Calcelyx-1.0-Windows.zip` from the latest GitHub release.
+2. Extract the entire archive to a writable folder.
+3. Run `Calcelyx.exe` and keep it together with the `_internal` folder.
+
+When building from source, the same application folder is created at `dist/Calcelyx`.
 
 The application stores user data beside the executable in `Dane`, `Eksporty` and `Kopie_zapasowe`. These folders are created only when the application is used and are not part of the public source package.
 
