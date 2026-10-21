@@ -2,6 +2,8 @@
 
 First public Windows release of Calcelyx, an offline estimator for renovation and interior-finishing work.
 
+Calcelyx was conceived and directed by **Jerzy Morawiecki**. The software implementation, technical design, tests and documentation were produced with **OpenAI Codex** under his direction and iterative review.
+
 ## Highlights
 
 - English and Polish interface.

@@ -4,6 +4,10 @@ Calcelyx is an offline Windows application for preparing renovation and interior
 
 [Polska wersja README](README_PL.md)
 
+## Credits
+
+Calcelyx was conceived and directed by **Jerzy Morawiecki**, who defined the business requirements, workflows and product decisions. The application was implemented with **OpenAI Codex**, which produced the source code, technical design, tests and documentation under that direction and iterative review. See [AUTHORS.md](AUTHORS.md) for the complete attribution.
+
 ## Main features
 
 - client, project and room management;

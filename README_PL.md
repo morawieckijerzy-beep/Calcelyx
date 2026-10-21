@@ -2,6 +2,10 @@
 
 Lokalna aplikacja Windows do przygotowywania wycen prac remontowo-wykończeniowych. Działa bez internetu i nie wymaga programu Excel.
 
+## Autorstwo i współpraca
+
+Pomysłodawcą i osobą kierującą rozwojem Calcelyx jest **Jerzy Morawiecki**, który określił potrzebę biznesową, wymagania, sposób działania oraz podejmował decyzje produktowe. Aplikacja została zaimplementowana przy użyciu **OpenAI Codex**, który pod tym kierunkiem i w oparciu o kolejne uwagi przygotował kod źródłowy, rozwiązania techniczne, testy i dokumentację. Pełny opis ról znajduje się w [AUTHORS.md](AUTHORS.md).
+
 ## Najważniejsze funkcje
 
 - obsługa klientów, inwestycji i pomieszczeń;

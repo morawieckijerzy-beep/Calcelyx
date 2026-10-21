@@ -9,6 +9,7 @@ if errorlevel 1 exit /b 1
 copy /y "README.md" "dist\Calcelyx\README.md" >nul
 copy /y "README_PL.md" "dist\Calcelyx\README_PL.md" >nul
 copy /y "RELEASE_NOTES.md" "dist\Calcelyx\RELEASE_NOTES.md" >nul
+copy /y "AUTHORS.md" "dist\Calcelyx\AUTHORS.md" >nul
 copy /y "THIRD-PARTY-NOTICES.txt" "dist\Calcelyx\THIRD-PARTY-NOTICES.txt" >nul
 copy /y "LICENSE" "dist\Calcelyx\LICENSE" >nul
 copy /y "docs\RAPORT_TESTOW_ISO_29119_25010.md" "dist\Calcelyx\RAPORT_TESTOW.md" >nul
