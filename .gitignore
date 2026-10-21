@@ -1,0 +1,38 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyd
+.pytest_cache/
+.coverage
+htmlcov/
+.venv/
+venv/
+
+# Build outputs and release archives
+build/
+dist/
+release/
+*.spec
+*.spec.bak
+
+# Calcelyx user data (may contain client information)
+Dane/
+Eksporty/
+Kopie_zapasowe/
+**/Dane/
+**/Eksporty/
+**/Kopie_zapasowe/
+*.sqlite3
+projekt_biezacy.json
+
+# Editors and operating systems
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Temporary files
+*.tmp
+*.bak
+~$*

@@ -1,0 +1,29 @@
+Calcelyx 1.0 — third-party components
+
+Calcelyx uses the following open-source components. Full license texts are
+available from the projects linked below and from their source distributions.
+
+Python — Python Software Foundation License
+https://www.python.org/psf/license/
+
+CustomTkinter — MIT License
+https://github.com/TomSchimansky/CustomTkinter
+
+openpyxl — MIT License
+https://foss.heptapod.net/openpyxl/openpyxl
+
+Pillow — HPND License
+https://github.com/python-pillow/Pillow
+
+ReportLab Community Toolkit — BSD License
+https://www.reportlab.com/software/opensource/
+
+pypdfium2 — Apache License 2.0; includes PDFium under the BSD-3-Clause License
+https://github.com/pypdfium2-team/pypdfium2
+https://pdfium.googlesource.com/pdfium/+/refs/heads/main/LICENSE
+
+PyInstaller — GPL-2.0-or-later with a bootloader distribution exception
+https://pyinstaller.org/en/stable/license.html
+
+SQLite — public domain
+https://www.sqlite.org/copyright.html

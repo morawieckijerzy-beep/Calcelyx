@@ -1,0 +1,66 @@
+{
+  "schema_version": 1,
+  "demo": true,
+  "notice": "CENNIK DEMONSTRACYJNY — kwoty są wyłącznie przykładowe i nie są cenami rynkowymi. Przed użyciem zastąp je własnymi stawkami.",
+  "items": [
+    {"code":"PRZ_ZAB_M2","category":"Przygotowanie i demontaże","name":"Zabezpieczenie podłóg i wyposażenia","unit":"m²","labor_net":8,"material_net":5,"vat_rate":23,"waste_pct":10,"min_charge":150,"active":true,"notes":"DEMO; folia, tektura i taśmy zależnie od zakresu"},
+    {"code":"PRZ_MEB_RYC","category":"Przygotowanie i demontaże","name":"Przestawienie i zabezpieczenie mebli","unit":"ryczałt","labor_net":250,"material_net":30,"vat_rate":23,"waste_pct":0,"min_charge":250,"active":true,"notes":"DEMO"},
+    {"code":"DEM_PLYT_M2","category":"Przygotowanie i demontaże","name":"Skucie płytek","unit":"m²","labor_net":45,"material_net":0,"vat_rate":23,"waste_pct":0,"min_charge":300,"active":true,"notes":"DEMO; bez wywozu"},
+    {"code":"DEM_PODL_M2","category":"Przygotowanie i demontaże","name":"Demontaż paneli lub wykładziny","unit":"m²","labor_net":18,"material_net":0,"vat_rate":23,"waste_pct":0,"min_charge":180,"active":true,"notes":"DEMO"},
+    {"code":"DEM_SCI_GK_M2","category":"Przygotowanie i demontaże","name":"Demontaż lekkiej zabudowy GK","unit":"m²","labor_net":38,"material_net":0,"vat_rate":23,"waste_pct":0,"min_charge":250,"active":true,"notes":"DEMO"},
+    {"code":"DEM_DRZ_SZT","category":"Przygotowanie i demontaże","name":"Demontaż drzwi z ościeżnicą","unit":"szt.","labor_net":180,"material_net":0,"vat_rate":23,"waste_pct":0,"min_charge":180,"active":true,"notes":"DEMO"},
+
+    {"code":"SCI_GRUNT_M2","category":"Ściany i malowanie","name":"Gruntowanie ścian","unit":"m²","labor_net":7,"material_net":3,"vat_rate":23,"waste_pct":8,"min_charge":150,"active":true,"notes":"DEMO"},
+    {"code":"SCI_GLADZ_M2","category":"Ściany i malowanie","name":"Gładź gipsowa z dwukrotnym szlifowaniem","unit":"m²","labor_net":48,"material_net":14,"vat_rate":23,"waste_pct":10,"min_charge":400,"active":true,"notes":"DEMO"},
+    {"code":"SCI_MAL_2X_M2","category":"Ściany i malowanie","name":"Malowanie ścian dwukrotne","unit":"m²","labor_net":24,"material_net":9,"vat_rate":23,"waste_pct":10,"min_charge":300,"active":true,"notes":"DEMO; farba standardowa"},
+    {"code":"SCI_TYN_GIP_M2","category":"Ściany i malowanie","name":"Tynk gipsowy ręczny","unit":"m²","labor_net":52,"material_net":26,"vat_rate":23,"waste_pct":12,"min_charge":500,"active":true,"notes":"DEMO"},
+    {"code":"SCI_TAP_M2","category":"Ściany i malowanie","name":"Tapetowanie","unit":"m²","labor_net":42,"material_net":8,"vat_rate":23,"waste_pct":12,"min_charge":300,"active":true,"notes":"DEMO; bez kosztu tapety"},
+    {"code":"SCI_LAM_M2","category":"Ściany i malowanie","name":"Montaż lameli ściennych","unit":"m²","labor_net":75,"material_net":140,"vat_rate":23,"waste_pct":10,"min_charge":350,"active":true,"notes":"DEMO"},
+
+    {"code":"POD_PRZYG_M2","category":"Podłogi, panele i deska","name":"Przygotowanie i oczyszczenie podłoża","unit":"m²","labor_net":12,"material_net":3,"vat_rate":23,"waste_pct":5,"min_charge":180,"active":true,"notes":"DEMO"},
+    {"code":"POD_WYL_M2","category":"Podłogi, panele i deska","name":"Masa samopoziomująca","unit":"m²","labor_net":35,"material_net":38,"vat_rate":23,"waste_pct":10,"min_charge":400,"active":true,"notes":"DEMO; typowa warstwa, zużycie zweryfikować"},
+    {"code":"POD_PANEL_M2","category":"Podłogi, panele i deska","name":"Układanie paneli laminowanych","unit":"m²","labor_net":38,"material_net":75,"vat_rate":23,"waste_pct":8,"min_charge":300,"active":true,"notes":"DEMO; materiał przykładowy"},
+    {"code":"POD_WINYL_M2","category":"Podłogi, panele i deska","name":"Układanie paneli winylowych","unit":"m²","labor_net":48,"material_net":115,"vat_rate":23,"waste_pct":8,"min_charge":350,"active":true,"notes":"DEMO"},
+    {"code":"POD_DESKA_M2","category":"Podłogi, panele i deska","name":"Klejenie deski warstwowej","unit":"m²","labor_net":85,"material_net":220,"vat_rate":23,"waste_pct":10,"min_charge":500,"active":true,"notes":"DEMO"},
+    {"code":"POD_LIST_MB","category":"Podłogi, panele i deska","name":"Montaż listew przypodłogowych","unit":"mb","labor_net":22,"material_net":28,"vat_rate":23,"waste_pct":10,"min_charge":180,"active":true,"notes":"DEMO"},
+
+    {"code":"PLY_GRUNT_M2","category":"Płytki","name":"Gruntowanie pod płytki","unit":"m²","labor_net":7,"material_net":4,"vat_rate":23,"waste_pct":8,"min_charge":120,"active":true,"notes":"DEMO"},
+    {"code":"PLY_HYDRO_M2","category":"Płytki","name":"Hydroizolacja podpłytkowa","unit":"m²","labor_net":28,"material_net":24,"vat_rate":23,"waste_pct":12,"min_charge":300,"active":true,"notes":"DEMO; taśmy liczone osobno"},
+    {"code":"PLY_STD_M2","category":"Płytki","name":"Układanie płytek standardowego formatu","unit":"m²","labor_net":110,"material_net":55,"vat_rate":23,"waste_pct":12,"min_charge":700,"active":true,"notes":"DEMO; materiał obejmuje chemię, nie płytkę"},
+    {"code":"PLY_DUZ_M2","category":"Płytki","name":"Układanie płytek wielkoformatowych","unit":"m²","labor_net":190,"material_net":85,"vat_rate":23,"waste_pct":15,"min_charge":1200,"active":true,"notes":"DEMO; wymaga indywidualnej oceny formatu"},
+    {"code":"PLY_COK_MB","category":"Płytki","name":"Cokół cięty z płytki","unit":"mb","labor_net":42,"material_net":10,"vat_rate":23,"waste_pct":15,"min_charge":200,"active":true,"notes":"DEMO"},
+    {"code":"PLY_45_MB","category":"Płytki","name":"Szlifowanie narożników pod 45 stopni","unit":"mb","labor_net":95,"material_net":8,"vat_rate":23,"waste_pct":10,"min_charge":250,"active":true,"notes":"DEMO"},
+    {"code":"PLY_OTW_SZT","category":"Płytki","name":"Otwór w płytce","unit":"szt.","labor_net":35,"material_net":5,"vat_rate":23,"waste_pct":0,"min_charge":70,"active":true,"notes":"DEMO"},
+
+    {"code":"GK_SCI_1_M2","category":"Sufity podwieszane i GK","name":"Ścianka GK, pojedyncze poszycie","unit":"m²","labor_net":85,"material_net":95,"vat_rate":23,"waste_pct":12,"min_charge":700,"active":true,"notes":"DEMO; bez malowania"},
+    {"code":"GK_SCI_2_M2","category":"Sufity podwieszane i GK","name":"Ścianka GK, podwójne poszycie","unit":"m²","labor_net":115,"material_net":145,"vat_rate":23,"waste_pct":12,"min_charge":900,"active":true,"notes":"DEMO; bez malowania"},
+    {"code":"GK_SUF_M2","category":"Sufity podwieszane i GK","name":"Sufit podwieszany jednopoziomowy","unit":"m²","labor_net":105,"material_net":105,"vat_rate":23,"waste_pct":12,"min_charge":800,"active":true,"notes":"DEMO; bez gładzi i malowania"},
+    {"code":"GK_USK_MB","category":"Sufity podwieszane i GK","name":"Uskok lub krawędź sufitu podwieszanego","unit":"mb","labor_net":75,"material_net":38,"vat_rate":23,"waste_pct":12,"min_charge":250,"active":true,"notes":"DEMO"},
+    {"code":"GK_LED_MB","category":"Sufity podwieszane i GK","name":"Wnęka na taśmę LED","unit":"mb","labor_net":95,"material_net":55,"vat_rate":23,"waste_pct":12,"min_charge":350,"active":true,"notes":"DEMO; bez osprzętu LED"},
+    {"code":"GK_REW_SZT","category":"Sufity podwieszane i GK","name":"Montaż klapy rewizyjnej","unit":"szt.","labor_net":140,"material_net":120,"vat_rate":23,"waste_pct":5,"min_charge":260,"active":true,"notes":"DEMO"},
+
+    {"code":"LAZ_WC_KPL","category":"Łazienka","name":"Montaż stelaża podtynkowego WC","unit":"kpl.","labor_net":650,"material_net":120,"vat_rate":23,"waste_pct":8,"min_charge":650,"active":true,"notes":"DEMO; bez ceny stelaża"},
+    {"code":"LAZ_UMY_KPL","category":"Łazienka","name":"Montaż umywalki z baterią","unit":"kpl.","labor_net":320,"material_net":60,"vat_rate":23,"waste_pct":5,"min_charge":320,"active":true,"notes":"DEMO; bez ceramiki i baterii"},
+    {"code":"LAZ_WAN_KPL","category":"Łazienka","name":"Montaż wanny z obudową","unit":"kpl.","labor_net":850,"material_net":180,"vat_rate":23,"waste_pct":8,"min_charge":850,"active":true,"notes":"DEMO; bez wanny"},
+    {"code":"LAZ_PRYS_KPL","category":"Łazienka","name":"Montaż kabiny prysznicowej","unit":"kpl.","labor_net":650,"material_net":80,"vat_rate":23,"waste_pct":5,"min_charge":650,"active":true,"notes":"DEMO; bez kabiny"},
+    {"code":"LAZ_ODP_KPL","category":"Łazienka","name":"Montaż odpływu liniowego","unit":"kpl.","labor_net":480,"material_net":90,"vat_rate":23,"waste_pct":8,"min_charge":480,"active":true,"notes":"DEMO; bez odpływu"},
+    {"code":"LAZ_SIL_MB","category":"Łazienka","name":"Silikonowanie sanitarne","unit":"mb","labor_net":18,"material_net":7,"vat_rate":23,"waste_pct":10,"min_charge":150,"active":true,"notes":"DEMO"},
+
+    {"code":"INS_EL_PKT","category":"Instalacje","name":"Punkt elektryczny","unit":"pkt","labor_net":170,"material_net":70,"vat_rate":23,"waste_pct":8,"min_charge":340,"active":true,"notes":"DEMO; zakres punktu wymaga uzgodnienia"},
+    {"code":"INS_LAMP_SZT","category":"Instalacje","name":"Montaż oprawy oświetleniowej","unit":"szt.","labor_net":110,"material_net":15,"vat_rate":23,"waste_pct":0,"min_charge":220,"active":true,"notes":"DEMO; bez oprawy"},
+    {"code":"INS_WOD_PKT","category":"Instalacje","name":"Punkt instalacji wodnej","unit":"pkt","labor_net":280,"material_net":120,"vat_rate":23,"waste_pct":10,"min_charge":560,"active":true,"notes":"DEMO"},
+    {"code":"INS_KAN_PKT","category":"Instalacje","name":"Punkt kanalizacyjny","unit":"pkt","labor_net":320,"material_net":150,"vat_rate":23,"waste_pct":10,"min_charge":640,"active":true,"notes":"DEMO"},
+    {"code":"INS_GRZ_SZT","category":"Instalacje","name":"Wymiana grzejnika","unit":"szt.","labor_net":420,"material_net":90,"vat_rate":23,"waste_pct":5,"min_charge":420,"active":true,"notes":"DEMO; bez grzejnika"},
+
+    {"code":"STO_DRZ_SZT","category":"Stolarka","name":"Montaż drzwi wewnętrznych z ościeżnicą","unit":"szt.","labor_net":520,"material_net":80,"vat_rate":23,"waste_pct":5,"min_charge":520,"active":true,"notes":"DEMO; bez drzwi"},
+    {"code":"STO_PAR_MB","category":"Stolarka","name":"Montaż parapetu","unit":"mb","labor_net":160,"material_net":45,"vat_rate":23,"waste_pct":10,"min_charge":240,"active":true,"notes":"DEMO; bez parapetu"},
+    {"code":"STO_OSC_MB","category":"Stolarka","name":"Obróbka ościeży","unit":"mb","labor_net":55,"material_net":18,"vat_rate":23,"waste_pct":10,"min_charge":250,"active":true,"notes":"DEMO"},
+    {"code":"STO_AKR_MB","category":"Stolarka","name":"Akrylowanie połączeń","unit":"mb","labor_net":12,"material_net":5,"vat_rate":23,"waste_pct":10,"min_charge":120,"active":true,"notes":"DEMO"},
+
+    {"code":"TRN_DOST_RYC","category":"Transport i koszty dodatkowe","name":"Dostawa materiałów","unit":"ryczałt","labor_net":150,"material_net":80,"vat_rate":23,"waste_pct":0,"min_charge":230,"active":true,"notes":"DEMO; strefa dojazdu do ustalenia"},
+    {"code":"TRN_GRUZ_RYC","category":"Transport i koszty dodatkowe","name":"Wywóz i utylizacja gruzu","unit":"ryczałt","labor_net":350,"material_net":650,"vat_rate":23,"waste_pct":0,"min_charge":1000,"active":true,"notes":"DEMO; pojemność kontenera do ustalenia"},
+    {"code":"TRN_SPRZ_RYC","category":"Transport i koszty dodatkowe","name":"Sprzątanie końcowe","unit":"ryczałt","labor_net":450,"material_net":80,"vat_rate":23,"waste_pct":0,"min_charge":530,"active":true,"notes":"DEMO"},
+    {"code":"TRN_PRAC_G","category":"Transport i koszty dodatkowe","name":"Praca dodatkowa poza zakresem","unit":"godz.","labor_net":90,"material_net":0,"vat_rate":23,"waste_pct":0,"min_charge":180,"active":true,"notes":"DEMO; wymaga akceptacji klienta"},
+    {"code":"TRN_KIER_D","category":"Transport i koszty dodatkowe","name":"Koordynacja prac","unit":"dzień","labor_net":450,"material_net":0,"vat_rate":23,"waste_pct":0,"min_charge":450,"active":true,"notes":"DEMO"}
+  ]
+}
