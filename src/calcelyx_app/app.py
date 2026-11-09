@@ -48,7 +48,7 @@ from .theme import FONT_FAMILY, TYPOGRAPHY, configure_ttk_styles, ctk_color
 install_ui_localization()
 
 APP_NAME = "Calcelyx"
-APP_VERSION = "1.0"
+APP_VERSION = "1.0.1"
 
 
 def safe_filename_component(value: object, fallback: str = "Projekt") -> str:
@@ -334,7 +334,7 @@ class App(ctk.CTk):
         text = ctk.CTkFrame(logo, fg_color="transparent")
         text.pack(side="left", padx=11)
         ctk.CTkLabel(text, text="Calcelyx", font=(FONT_FAMILY, 16, "bold"), anchor="w").pack(anchor="w")
-        ctk.CTkLabel(text, text="wersja 1.0 • offline", font=(FONT_FAMILY, 10), text_color=ctk_color("text_muted"), anchor="w").pack(anchor="w")
+        ctk.CTkLabel(text, text="wersja 1.0.1 • offline", font=(FONT_FAMILY, 10), text_color=ctk_color("text_muted"), anchor="w").pack(anchor="w")
 
         items = [
             ("start", "⌂", "Pulpit"),

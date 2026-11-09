@@ -1,4 +1,4 @@
-# Calcelyx 1.0
+# Calcelyx 1.0.1
 
 Calcelyx is an offline Windows application for preparing renovation and interior-finishing estimates. It does not require an internet connection or Microsoft Excel.
 
@@ -28,7 +28,7 @@ Calcelyx was conceived and directed by **Jerzy Morawiecki**, who defined the bus
 
 ## Running the packaged application
 
-1. Download `Calcelyx-1.0-Windows.zip` from the latest GitHub release.
+1. Download `Calcelyx-1.0.1-Windows.zip` from the latest GitHub release.
 2. Extract the entire archive to a writable folder.
 3. Run `Calcelyx.exe` and keep it together with the `_internal` folder.
 

@@ -16,7 +16,7 @@ _installed = False
 
 
 EN: dict[str, str] = {
-    "wersja 1.0 • offline": "version 1.0 • offline",
+    "wersja 1.0.1 • offline": "version 1.0.1 • offline",
     "Pulpit": "Dashboard", "Inwestycja": "Project", "Rzut i obmiary": "Plan & measurements",
     "Kosztorys": "Estimate", "Cennik": "Price list", "Cennik robót": "Price list", "Ustawienia": "Settings", "Waluta": "Currency",
     "Zapisz": "Save", "Eksport PDF": "Export PDF", "Dane przechowywane lokalnie": "Data stored locally",
