@@ -1,4 +1,4 @@
-# Calcelyx 1.0
+# Calcelyx 1.0.1
 
 Lokalna aplikacja Windows do przygotowywania wycen prac remontowo-wykończeniowych. Działa bez internetu i nie wymaga programu Excel.
 
@@ -28,7 +28,7 @@ Walutę wyceny wybiera się osobno w `Ustawienia` → `Reguły oferty`. Zmiana o
 
 ## Uruchomienie gotowej aplikacji
 
-1. Pobierz `Calcelyx-1.0-Windows.zip` z najnowszego wydania GitHub.
+1. Pobierz `Calcelyx-1.0.1-Windows.zip` z najnowszego wydania GitHub.
 2. Rozpakuj całe archiwum do folderu, w którym masz prawo zapisu.
 3. Uruchom `Calcelyx.exe` i pozostaw go razem z folderem `_internal`.
 

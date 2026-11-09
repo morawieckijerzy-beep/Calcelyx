@@ -201,7 +201,7 @@ def export_offer_pdf(path: str | Path, project: dict[str, Any], lines: list[dict
         canvas.saveState()
         canvas.setFont(regular, 7)
         canvas.setFillColor(MUTED)
-        canvas.drawString(16 * mm, 8 * mm, f"{t('Oferta')} {project.get('number', '')} • {t('wygenerowano w')} Calcelyx 1.0")
+        canvas.drawString(16 * mm, 8 * mm, f"{t('Oferta')} {project.get('number', '')} • {t('wygenerowano w')} Calcelyx 1.0.1")
         canvas.drawRightString(194 * mm, 8 * mm, f"{t('Strona')} {document.page}")
         canvas.restoreState()
 
