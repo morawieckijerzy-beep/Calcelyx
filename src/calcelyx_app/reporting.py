@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from datetime import date
-from decimal import Decimal
+from decimal import Decimal, ROUND_HALF_UP
 from pathlib import Path
 from typing import Any, Iterable
 from xml.sax.saxutils import escape
@@ -34,6 +34,7 @@ MUTED = colors.HexColor("#667085")
 PALE = colors.HexColor("#EFF6FF")
 LINE = colors.HexColor("#D9E2F0")
 SUPPORTED_CURRENCIES = ("PLN", "EUR", "USD", "GBP", "CHF", "CZK", "SEK", "NOK", "DKK")
+CENT = Decimal("0.01")
 
 
 def _register_fonts() -> tuple[str, str]:
@@ -58,7 +59,7 @@ def normalize_currency(currency: Any) -> str:
 
 
 def money(value: Any, language: str | None = None, currency: str = "PLN") -> str:
-    amount = Decimal(str(value or 0)).quantize(Decimal("0.01"))
+    amount = round_money(Decimal(str(value or 0)))
     selected = language or get_language()
     code = normalize_currency(currency)
     if selected == "pl":
@@ -76,26 +77,27 @@ def safe(value: Any) -> str:
     return escape(str(value or ""))
 
 
-def _totals(lines: Iterable[dict[str, Any]], discount_pct: Decimal, markup_pct: Decimal) -> dict[str, Decimal]:
-    net = sum((Decimal(str(line.get("net", 0))) for line in lines if line.get("included", True)), Decimal("0"))
-    markup = (net * markup_pct / Decimal("100")).quantize(Decimal("0.01"))
-    discount = ((net + markup) * discount_pct / Decimal("100")).quantize(Decimal("0.01"))
-    after = net + markup - discount
+def round_money(value: Decimal) -> Decimal:
+    """Round to cents with the one rule used on screen and in documents."""
+    return value.quantize(CENT, rounding=ROUND_HALF_UP)
+
+
+def calculate_totals(lines: Iterable[dict[str, Any]], discount_pct: Decimal, markup_pct: Decimal) -> dict[str, Decimal]:
+    """Return offer totals; the single calculation behind the UI and the PDF."""
+    included = [line for line in lines if line.get("included", True)]
+    base = sum((Decimal(str(line.get("net", 0))) for line in included), Decimal("0"))
+    markup = round_money(base * markup_pct / Decimal("100"))
+    discount = round_money((base + markup) * discount_pct / Decimal("100"))
+    net = round_money(base + markup - discount)
     base_vat = sum(
-        (
-            Decimal(str(line.get("net", 0)))
-            * Decimal(str(line.get("vat_rate", 23)))
-            / Decimal("100")
-            for line in lines
-            if line.get("included", True)
-        ),
+        (Decimal(str(line.get("net", 0))) * Decimal(str(line.get("vat_rate", 23))) / Decimal("100") for line in included),
         Decimal("0"),
     )
     factor = (Decimal("1") + markup_pct / Decimal("100")) * (
         Decimal("1") - discount_pct / Decimal("100")
     )
-    vat = (base_vat * factor).quantize(Decimal("0.01"))
-    return {"base": net, "markup": markup, "discount": discount, "net": after, "vat": vat, "gross": after + vat}
+    vat = round_money(base_vat * factor)
+    return {"base": round_money(base), "markup": markup, "discount": discount, "net": net, "vat": vat, "gross": net + vat}
 
 
 def export_offer_pdf(path: str | Path, project: dict[str, Any], lines: list[dict[str, Any]], language: str = "pl") -> Path:
@@ -116,7 +118,7 @@ def export_offer_pdf(path: str | Path, project: dict[str, Any], lines: list[dict
 
     discount = Decimal(str(project.get("discount_pct", 0)))
     markup = Decimal(str(project.get("markup_pct", 0)))
-    totals = _totals(lines, discount, markup)
+    totals = calculate_totals(lines, discount, markup)
 
     doc = SimpleDocTemplate(
         str(output),

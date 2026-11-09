@@ -8,7 +8,7 @@ import sys
 import tkinter as tk
 from dataclasses import asdict
 from datetime import date, datetime
-from decimal import Decimal, InvalidOperation, ROUND_HALF_UP
+from decimal import Decimal, InvalidOperation
 from pathlib import Path
 from tkinter import filedialog, messagebox, simpledialog, ttk
 from uuid import uuid4
@@ -16,7 +16,7 @@ from uuid import uuid4
 import customtkinter as ctk
 
 from .database import Database
-from .domain import Estimate, Project, Room
+from .domain import Estimate
 from .floorplan import FloorPlanCanvas
 from .i18n import SUPPORTED_LANGUAGES, get_language, install_ui_localization, set_language, tr
 from .pricelist import (
@@ -28,7 +28,20 @@ from .pricelist import (
     item_to_dict,
     load_demo_items,
 )
-from .reporting import SUPPORTED_CURRENCIES, export_estimate_xlsx, export_offer_pdf, money, normalize_currency
+from .project_state import (
+    build_domain_project,
+    calculate_line_net,
+    d,
+    format_exact_number,
+    line_min_charge,
+    normalize_loaded_state,
+    obsolete_project_files,
+    parse_price_items,
+    quarantine_file,
+    read_project_file,
+    save_rejected_prices,
+)
+from .reporting import SUPPORTED_CURRENCIES, calculate_totals, export_estimate_xlsx, export_offer_pdf, money, normalize_currency, round_money
 from .theme import FONT_FAMILY, TYPOGRAPHY, configure_ttk_styles, ctk_color
 
 
@@ -36,7 +49,6 @@ install_ui_localization()
 
 APP_NAME = "Calcelyx"
 APP_VERSION = "1.0"
-Q2 = Decimal("0.01")
 
 
 def safe_filename_component(value: object, fallback: str = "Projekt") -> str:
@@ -75,15 +87,8 @@ def user_data_root() -> Path:
     return root
 
 
-def d(value: object, default: str = "0") -> Decimal:
-    try:
-        return Decimal(str(value).replace(" ", "").replace(",", "."))
-    except (InvalidOperation, ValueError, TypeError):
-        return Decimal(default)
-
-
 def q(value: Decimal) -> Decimal:
-    return value.quantize(Q2, rounding=ROUND_HALF_UP)
+    return round_money(value)
 
 
 def display_number(value: object, digits: int = 2) -> str:
@@ -228,21 +233,25 @@ class App(ctk.CTk):
         if self.state_path.exists():
             try:
                 loaded = json.loads(self.state_path.read_text(encoding="utf-8"))
-                defaults = self._default_state()
-                defaults.update(loaded)
-                defaults["project"].update(loaded.get("project", {}))
-                defaults["travel"].update(loaded.get("travel", {}))
-                self.state = AppState(self, defaults)
-            except Exception as exc:
-                messagebox.showwarning("Odzyskiwanie danych", f"Nie udało się odczytać ostatniego projektu:\n{exc}")
+                self.state = AppState(self, normalize_loaded_state(loaded, self._default_state()))
+            except (OSError, RecursionError, ValueError) as exc:
+                # The next save replaces this file, so keep what it holds.
+                try:
+                    kept_copy = f"Kopia pliku: {quarantine_file(self.state_path)}"
+                except OSError as copy_error:
+                    kept_copy = f"Nie udało się utworzyć kopii pliku {self.state_path}:\n{copy_error}"
+                messagebox.showwarning("Odzyskiwanie danych", f"Nie udało się odczytać ostatniego projektu:\n{exc}\n\n{kept_copy}")
         self.language = str(self.state.get("language", "en"))
         set_language(self.language)
         raw_prices = self.state.get("pricelist") or []
         if raw_prices:
-            try:
-                self.prices = [PriceItem(**item) for item in raw_prices]
-            except Exception:
-                self.prices = []
+            self.prices, rejected_prices = parse_price_items(raw_prices)
+            if rejected_prices:
+                try:
+                    recovery_note = f"Zapisano je w pliku: {save_rejected_prices(self.state_path.parent, rejected_prices)}"
+                except OSError as save_error:
+                    recovery_note = f"Nie udało się ich zapisać:\n{save_error}"
+                messagebox.showwarning("Odzyskiwanie danych", f"Nie udało się odczytać pozycji cennika: {len(rejected_prices)}.\n\n{recovery_note}")
         if not self.prices:
             try:
                 self.prices = self._bundled_demo_prices(self.language)
@@ -280,34 +289,20 @@ class App(ctk.CTk):
         os.replace(temp, self.state_path)
         project_copy = self.projects_dir / friendly_name
         project_copy.write_text(json.dumps(self.state, ensure_ascii=False, indent=2), encoding="utf-8")
-        obsolete_names = {str(previous_project_file or ""), f"{self.state['id']}.json"}
-        for obsolete_name in obsolete_names:
-            obsolete = self.projects_dir / obsolete_name
-            if obsolete_name and obsolete != project_copy and obsolete.exists() and obsolete.is_file():
-                obsolete.unlink()
-        project = self._domain_project()
-        self.db.save_project(project)
+        obsolete_names = [previous_project_file, f"{self.state['id']}.json"]
+        for obsolete in obsolete_project_files(self.projects_dir, obsolete_names, self.state["id"], project_copy):
+            obsolete.unlink()
+        self.db.save_project(build_domain_project(self.state))
         self._dirty = False
         self.status_var.set(f"{tr('Zapisano lokalnie • ')}{datetime.now().strftime('%H:%M')}")
         if not quiet:
             self._toast("Projekt został zapisany.")
 
-    def _domain_project(self) -> Project:
-        rooms: list[Room] = []
-        for item in self.state["rooms"]:
-            length, width = d(item.get("length")), d(item.get("width"))
-            points = item.get("points") or [["0", "0"], [str(length), "0"], [str(length), str(width)], ["0", str(width)]]
-            try:
-                rooms.append(Room(name=item["name"], points=points, height=item.get("height", "2.6")))
-            except Exception:
-                continue
-        return Project(
-            id=self.state["id"],
-            name=self.state["project"].get("name") or "Nowa wycena",
-            customer_name=self.state["project"].get("client_name", ""),
-            notes=json.dumps({"project": self.state["project"], "travel": self.state["travel"]}, ensure_ascii=False),
-            rooms=rooms,
-        )
+    def _clear_undo_buffers(self) -> None:
+        """Forget deleted items so they cannot be restored into another project."""
+        self._last_deleted_rooms = []
+        self._last_deleted_lines = []
+        self._last_deleted_prices = []
 
     def mark_dirty(self) -> None:
         self._dirty = True
@@ -1052,15 +1047,14 @@ class App(ctk.CTk):
                 return
             labor_price, material_price = d(item.labor_net), d(item.material_net)
             unit_price = labor_price + material_price
-            labor_total = qty * labor_price * diff
-            material_total = qty * (Decimal("1") + waste_pct / 100) * material_price * diff
-            total = max(d(item.min_charge), labor_total + material_total)
+            min_charge = d(item.min_charge)
+            total = calculate_line_net(qty, labor_price, material_price, waste_pct, diff, min_charge)
             formula = f"robocizna: {display_number(qty)} {item.unit} × {self._money(labor_price)}; materiał: {display_number(qty)} {item.unit} × {self._money(material_price)}"
             if waste_pct:
                 formula += f" + {display_number(waste_pct)}% odpadu materiałowego"
             if diff != 1:
                 formula += f" × trudność {display_number(diff)}"
-            self.state["lines"].append({"id": str(uuid4()), "code": item.code, "room": "" if room.get() == "Bez przypisania" else room.get(), "name": item.name, "quantity": str(qty), "unit": item.unit, "labor_net": str(q(d(item.labor_net))), "material_net": str(q(d(item.material_net))), "unit_price": str(q(unit_price)), "waste_pct": str(waste_pct), "difficulty": str(diff), "net": str(q(total)), "vat_rate": item.vat_rate, "included": True, "formula": formula})
+            self.state["lines"].append({"id": str(uuid4()), "code": item.code, "room": "" if room.get() == "Bez przypisania" else room.get(), "name": item.name, "quantity": str(qty), "unit": item.unit, "labor_net": str(labor_price), "material_net": str(material_price), "unit_price": str(q(unit_price)), "waste_pct": str(waste_pct), "difficulty": str(diff), "min_charge": str(min_charge), "net": str(q(total)), "vat_rate": item.vat_rate, "included": True, "formula": formula})
             self.mark_dirty()
             window.destroy()
             self.show_page("estimate")
@@ -1143,7 +1137,7 @@ class App(ctk.CTk):
             row.pack(fill="x", padx=24, pady=5)
             ctk.CTkLabel(row, text=label, width=285, anchor="w").pack(side="left")
             entry = ctk.CTkEntry(row, width=190)
-            entry.insert(0, display_number(value))
+            entry.insert(0, format_exact_number(value, get_language()))
             entry.pack(side="right")
             fields[key] = entry
         included = tk.BooleanVar(value=line.get("included", True))
@@ -1161,9 +1155,10 @@ class App(ctk.CTk):
                 messagebox.showwarning("Nieprawidłowe dane", str(exc), parent=window)
                 return
             unit_price = labor + material
-            total = (qty * labor + qty * (Decimal("1") + waste / 100) * material) * difficulty
+            min_charge = line_min_charge(line, self.prices)
+            total = calculate_line_net(qty, labor, material, waste, difficulty, min_charge)
             selected_room = "" if room_choice.get() == "Bez przypisania" else room_choice.get()
-            line.update(room=selected_room, quantity=str(qty), labor_net=str(q(labor)), material_net=str(q(material)), unit_price=str(q(unit_price)), waste_pct=str(waste), difficulty=str(difficulty), vat_rate=float(vat), included=included.get(), net=str(q(total)), formula=f"robocizna: {display_number(qty)} × {self._money(labor)}; materiał: {display_number(qty)} × {self._money(material)} + {display_number(waste)}% odpadu; trudność × {display_number(difficulty)}")
+            line.update(room=selected_room, quantity=str(qty), labor_net=str(labor), material_net=str(material), min_charge=str(min_charge), unit_price=str(q(unit_price)), waste_pct=str(waste), difficulty=str(difficulty), vat_rate=float(vat), included=included.get(), net=str(q(total)), formula=f"robocizna: {display_number(qty)} × {self._money(labor)}; materiał: {display_number(qty)} × {self._money(material)} + {display_number(waste)}% odpadu; trudność × {display_number(difficulty)}")
             self.mark_dirty()
             window.destroy()
             self.show_page("estimate")
@@ -1227,14 +1222,8 @@ class App(ctk.CTk):
         self.state["lines"].append({"id": str(uuid4()), "code": "DOJAZD", "room": "Inwestycja", "name": "Dojazdy, parking i opłaty", "quantity": str(q(all_km)), "unit": "km", "unit_price": str(q(d(travel["rate"]))), "net": str(q(total)), "vat_rate": 23, "included": True, "formula": f"{display_number(all_km)} km × {self._money(travel['rate'])} + opłaty {self._money(travel['parking'])}"})
 
     def _calculate_totals(self) -> dict[str, Decimal]:
-        included = [line for line in self.state["lines"] if line.get("included", True)]
-        base = sum((d(line.get("net")) for line in included), Decimal("0"))
-        markup = q(base * d(self.state["project"].get("markup_pct")) / 100)
-        discount = q((base + markup) * d(self.state["project"].get("discount_pct")) / 100)
-        net = q(base + markup - discount)
-        factor = (Decimal("1") + d(self.state["project"].get("markup_pct")) / 100) * (Decimal("1") - d(self.state["project"].get("discount_pct")) / 100)
-        vat = q(sum((d(line.get("net")) * d(line.get("vat_rate", 23)) / 100 for line in included), Decimal("0")) * factor)
-        return {"base": q(base), "markup": markup, "discount": discount, "net": net, "vat": vat, "gross": net + vat}
+        lines = [{**line, "net": d(line.get("net")), "vat_rate": d(line.get("vat_rate", 23))} for line in self.state["lines"]]
+        return calculate_totals(lines, d(self.state["project"].get("discount_pct")), d(self.state["project"].get("markup_pct")))
 
     def _page_prices(self) -> None:
         outer = ctk.CTkFrame(self.content, fg_color="transparent")
@@ -1523,6 +1512,7 @@ class App(ctk.CTk):
         shutil.copytree(source, self.data_dir, dirs_exist_ok=True)
         self.state = AppState(self, self._default_state())
         self._load_state()
+        self._clear_undo_buffers()
         self.show_page("start")
         self._toast("Kopia została przywrócona.")
 
@@ -1533,6 +1523,7 @@ class App(ctk.CTk):
         current_prices = [item_to_dict(item) for item in self.prices]
         self.state = AppState(self, self._default_state())
         self.state["pricelist"] = current_prices
+        self._clear_undo_buffers()
         self.mark_dirty()
         self.show_page("investment")
 
@@ -1542,14 +1533,22 @@ class App(ctk.CTk):
         if not path:
             return
         try:
-            loaded = json.loads(Path(path).read_text(encoding="utf-8"))
-            loaded["language"] = self.language
-            self.state = AppState(self, loaded)
-            self.prices = [PriceItem(**item) for item in loaded.get("pricelist", [])] or self.prices
-            self.mark_dirty()
+            state, prices = read_project_file(Path(path), self._default_state(), self.language, self.projects_dir)
+        except (OSError, RecursionError, ValueError) as exc:
+            messagebox.showerror("Otwieranie projektu", f"Nie udało się otworzyć projektu:\n{exc}", parent=self)
+            return
+        previous_state, previous_prices, previous_dirty = self.state, self.prices, self._dirty
+        try:
+            self.state = AppState(self, state)
+            self.prices = prices or self.prices
             self.show_page("start")
         except Exception as exc:
+            self.state, self.prices, self._dirty = previous_state, previous_prices, previous_dirty
+            self.show_page("start")
             messagebox.showerror("Otwieranie projektu", f"Nie udało się otworzyć projektu:\n{exc}", parent=self)
+            return
+        self._clear_undo_buffers()
+        self.mark_dirty()
 
     def export_pdf(self) -> None:
         issues = self._offer_validation_issues()

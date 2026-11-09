@@ -7,7 +7,7 @@ from pypdf import PdfReader
 
 from decimal import Decimal
 
-from calcelyx_app.reporting import _totals, export_estimate_xlsx, export_offer_pdf
+from calcelyx_app.reporting import calculate_totals, export_estimate_xlsx, export_offer_pdf
 
 
 PROJECT = {
@@ -45,7 +45,7 @@ def test_xlsx_export_has_formula_and_rows(tmp_path: Path):
 
 
 def test_pdf_totals_apply_markup_and_discount_to_vat():
-    totals = _totals(LINES, Decimal("2"), Decimal("5"))
+    totals = calculate_totals(LINES, Decimal("2"), Decimal("5"))
     factor = Decimal("1.05") * Decimal("0.98")
     expected_vat = (Decimal("850") * Decimal("0.08") * factor).quantize(Decimal("0.01"))
     assert totals["vat"] == expected_vat

@@ -14,7 +14,14 @@ from .domain import Estimate, Project
 
 
 ALLOWED_STATUSES = frozenset({"draft", "sent", "accepted", "rejected"})
-LOCKED_STATUSES = frozenset({"sent", "accepted"})
+LOCKED_STATUSES = frozenset({"sent", "accepted", "rejected"})
+# A locked snapshot never returns to draft: changing an offer means a new revision.
+REVISION_TRANSITIONS = {
+    "draft": frozenset({"draft", "sent", "rejected"}),
+    "sent": frozenset({"sent", "accepted", "rejected"}),
+    "accepted": frozenset({"accepted"}),
+    "rejected": frozenset({"rejected"}),
+}
 
 
 class RevisionNotFoundError(LookupError):
@@ -173,7 +180,7 @@ class Database:
         *,
         status: str | None = None,
     ) -> None:
-        """Update a draft snapshot; sent and accepted snapshots never change."""
+        """Update a draft snapshot; sent, accepted and rejected snapshots never change."""
 
         if estimate.project_id != project_id:
             raise ValueError("Estimate belongs to a different project")
@@ -195,6 +202,7 @@ class Database:
                     f"Revision {revision_number} is {row['status']} and cannot be edited"
                 )
             new_status = status or row["status"]
+            self._ensure_transition_allowed(row["status"], new_status)
             connection.execute(
                 """
                 UPDATE estimate_revisions
@@ -227,11 +235,7 @@ class Database:
             ).fetchone()
             if row is None:
                 raise RevisionNotFoundError((project_id, revision_number))
-            current = row["status"]
-            if current == "accepted" and status != "accepted":
-                raise ImmutableRevisionError("An accepted revision has a terminal status")
-            if current == "rejected" and status not in {"rejected", "draft"}:
-                raise ValueError("A rejected revision must be returned to draft first")
+            self._ensure_transition_allowed(row["status"], status)
             connection.execute(
                 """
                 UPDATE estimate_revisions SET status = ?, updated_at = ?
@@ -276,6 +280,14 @@ class Database:
             finally:
                 destination.close()
         return target_path
+
+    @staticmethod
+    def _ensure_transition_allowed(current: str, status: str) -> None:
+        if status in REVISION_TRANSITIONS[current]:
+            return
+        if current in LOCKED_STATUSES:
+            raise ImmutableRevisionError(f"A {current} revision cannot become {status}")
+        raise ValueError(f"A {current} revision cannot become {status}")
 
     @staticmethod
     def _validate_status(status: str) -> None:

@@ -60,6 +60,36 @@ class DatabaseTests(unittest.TestCase):
             "accepted",
         )
 
+    def _revision_with_status(self, *statuses: str) -> int:
+        revision = self.database.create_estimate_revision(self.project.id, Estimate(self.project.id))
+        for status in statuses:
+            self.database.set_revision_status(self.project.id, revision, status)
+        return revision
+
+    def test_sent_revision_cannot_return_to_draft_and_be_edited(self) -> None:
+        revision = self._revision_with_status("sent")
+        with self.assertRaises(ImmutableRevisionError):
+            self.database.set_revision_status(self.project.id, revision, "draft")
+        with self.assertRaises(ImmutableRevisionError):
+            self.database.update_estimate_revision(self.project.id, revision, Estimate(self.project.id, notes="x"))
+
+    def test_finished_revisions_are_terminal(self) -> None:
+        for finished in ("accepted", "rejected"):
+            revision = self._revision_with_status("sent", finished)
+            for status in ({"draft", "sent", "accepted", "rejected"} - {finished}):
+                with self.assertRaises(ImmutableRevisionError):
+                    self.database.set_revision_status(self.project.id, revision, status)
+            with self.assertRaises(ImmutableRevisionError):
+                self.database.update_estimate_revision(self.project.id, revision, Estimate(self.project.id))
+
+    def test_draft_cannot_skip_sending_to_be_accepted(self) -> None:
+        revision = self._revision_with_status()
+        with self.assertRaises(ValueError):
+            self.database.set_revision_status(self.project.id, revision, "accepted")
+        with self.assertRaises(ValueError):
+            self.database.update_estimate_revision(self.project.id, revision, Estimate(self.project.id), status="accepted")
+        self.assertEqual(self.database.load_estimate_revision(self.project.id, revision).status, "draft")
+
     def test_backup_is_readable(self) -> None:
         backup_path = self.database.backup(self.root / "backup" / "copy.sqlite3")
         backup = Database(backup_path)
